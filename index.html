@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Material Studio Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f3f3f3;
+      --card: #ffffff;
+      --accent: #111111;
+      --muted: #a0a0a0;
+      --border: #e0e0e0;
+      --danger: #c0392b;
+      --success: #1e8449;
+      --mono: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: #222;
+      font-family: var(--sans);
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1320px;
+      padding: 32px 24px 48px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    header h1 span {
+      font-weight: 600;
+    }
+
+    header nav {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    header nav span {
+      margin-left: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.4fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.02);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .panel-title {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .panel-subtitle {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #b0b0b0;
+      margin-top: 2px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .pill-button {
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .pill-button:hover {
+      background: #111;
+      color: #fdfdfd;
+      border-color: #111;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    thead {
+      border-bottom: 1px solid var(--border);
+    }
+
+    th, td {
+      padding: 6px 0;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: default;
+    }
+
+    th.sortable {
+      cursor: pointer;
+    }
+
+    th.sortable::after {
+      content: "";
+      display: inline-block;
+      margin-left: 4px;
+      border: 3px solid transparent;
+      border-top-color: #ccc;
+      transform: translateY(2px);
+    }
+
+    th.sortable[data-dir="desc"]::after {
+      border-top-color: transparent;
+      border-bottom-color: #ccc;
+      transform: translateY(-2px);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.12s;
+    }
+
+    tbody tr:hover {
+      background: #fafafa;
+    }
+
+    tbody tr.equity-row {
+      cursor: pointer;
+    }
+
+    td.symbol {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    td.name {
+      font-size: 12px;
+    }
+
+    td.price {
+      text-align: right;
+      width: 90px;
+    }
+
+    td.change, td.change-pct {
+      text-align: right;
+      width: 64px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .up {
+      color: var(--success);
+    }
+
+    .down {
+      color: var(--danger);
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #bcbcbc;
+      margin: 12px 0 2px;
+    }
+
+    .section-label:first-of-type {
+      margin-top: 0;
+    }
+
+    .fx-grid, .staking-grid {
+      font-size: 11px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .fx-row, .staking-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 4px 0;
+      border-bottom: 1px solid #f7f7f7;
+    }
+
+    .fx-row:last-child,
+    .staking-row:last-child {
+      border-bottom: none;
+    }
+
+    .fx-pair {
+      font-family: var(--mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .fx-rate {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .crypto-table td {
+      padding: 4px 0;
+      font-size: 11px;
+    }
+
+    .crypto-table td:first-child {
+      font-family: var(--mono);
+      letter-spacing: 0.10em;
+    }
+
+    .crypto-table td:nth-child(2) {
+      padding-left: 4px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .insight-panel {
+      margin-top: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      font-size: 12px;
+    }
+
+    .insight-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .insight-title {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .insight-symbol {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-left: 6px;
+    }
+
+    .insight-meta {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .insight-body {
+      margin-top: 4px;
+      line-height: 1.6;
+    }
+
+    .insight-toggle {
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: underline;
+    }
+
+    .news-list {
+      margin-top: 6px;
+      padding-left: 0;
+      list-style: none;
+      font-size: 11px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .news-list li {
+      margin-bottom: 6px;
+    }
+
+    .news-list a {
+      color: #222;
+      text-decoration: none;
+    }
+
+    .news-list a:hover {
+      text-decoration: underline;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-left: 6px;
+    }
+
+    .error-text {
+      font-size: 11px;
+      color: var(--danger);
+      margin-top: 4px;
+    }
+
+    .refresh-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+      font-size: 10px;
+      color: var(--muted);
+      align-items: center;
+      gap: 8px;
+    }
+
+    .refresh-btn {
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .refresh-btn:hover {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>
+        <span>MATERIAL STUDIO</span> · PORTFOLIO
+      </h1>
+      <nav>
+        <span>EQUITIES</span>
+        <span>CRYPTO</span>
+        <span>FX</span>
+        <span>YIELD</span>
+        <span>NEWS</span>
+      </nav>
+    </header>
+
+    <div class="refresh-bar">
+      <span id="last-updated">UPDATED — …</span>
+      <button class="refresh-btn" id="refresh-all">REFRESH</button>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: EQUITIES -->
+      <section class="panel" id="equities-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Equities</div>
+            <div class="panel-subtitle">AI · DATA CENTER · ECOSYSTEM</div>
+          </div>
+          <div class="pill">Yahoo Finance · Server API</div>
+        </div>
+
+        <div id="equities-table-container"></div>
+
+        <div id="equity-insight" class="insight-panel" style="display:none;"></div>
+        <div id="equities-error" class="error-text" style="display:none;"></div>
+      </section>
+
+      <!-- RIGHT: FX / CRYPTO / YIELD / NEWS -->
+      <section class="panel">
+        <!-- FX -->
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">FX</div>
+            <div class="panel-subtitle">KRW BASE · MAJOR PAIRS</div>
+          </div>
+          <div class="pill">ExchangeRate.host</div>
+        </div>
+        <div id="fx-container" class="fx-grid"></div>
+        <div id="fx-error" class="error-text" style="display:none;"></div>
+
+        <!-- CRYPTO -->
+        <div class="panel-header" style="margin-top:14px;">
+          <div>
+            <div class="panel-title">CRYPTO MARKET</div>
+            <div class="panel-subtitle">TOP 15 · MARKET CAP</div>
+          </div>
+          <div class="pill">CoinGecko</div>
+        </div>
+        <table class="crypto-table">
+          <thead>
+            <tr>
+              <th>SYM</th>
+              <th>NAME</th>
+              <th style="text-align:right;">USD</th>
+              <th style="text-align:right;">24H %</th>
+              <th style="text-align:right;">VOLUME</th>
+            </tr>
+          </thead>
+          <tbody id="crypto-body"></tbody>
+        </table>
+        <div id="crypto-error" class="error-text" style="display:none;"></div>
+
+        <!-- STAKING (샘플 수동 값) -->
+        <div class="panel-header" style="margin-top:14px;">
+          <div>
+            <div class="panel-title">STAKING YIELD</div>
+            <div class="panel-subtitle">MANUAL SNAPSHOT · APY</div>
+          </div>
+          <div class="pill">On-chain / CeFi mix</div>
+        </div>
+        <div class="staking-grid">
+          <div class="staking-row">
+            <div>
+              <div>AVAX <span class="badge">Bybit Earn</span></div>
+              <div class="muted" style="font-size:10px;">Locked staking · sample</div>
+            </div>
+            <div class="fx-rate">~7.5%</div>
+          </div>
+          <div class="staking-row">
+            <div>
+              <div>SUI <span class="badge">On-chain</span></div>
+              <div class="muted" style="font-size:10px;">Validator yield · sample</div>
+            </div>
+            <div class="fx-rate">~6.2%</div>
+          </div>
+          <div class="staking-row">
+            <div>
+              <div>APT <span class="badge">On-chain</span></div>
+              <div class="muted" style="font-size:10px;">Delegated · sample</div>
+            </div>
+            <div class="fx-rate">~7.0%</div>
+          </div>
+          <div class="muted" style="font-size:10px; margin-top:4px;">
+            * 실제 수익률은 거래소·체인에 따라 달라집니다. 여기선 포트폴리오 레이아웃용 임시값입니다.
+          </div>
+        </div>
+
+        <!-- NEWS -->
+        <div class="panel-header" style="margin-top:14px;">
+          <div>
+            <div class="panel-title">NEWS</div>
+            <div class="panel-subtitle">MARKET · SYMBOL STREAM</div>
+          </div>
+          <div class="pill">Finnhub API</div>
+        </div>
+        <div style="font-size:11px; margin-bottom:4px;">
+          <span class="muted">Focus symbol:</span>
+          <span id="news-symbol" class="chip">NVDA</span>
+        </div>
+        <ul id="news-list" class="news-list"></ul>
+        <div id="news-error" class="error-text" style="display:none;"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ------------------------------
+    //  EQUITY UNIVERSE & META
+    // ------------------------------
+
+    const EQUITIES = [
+      // AI / DATA CENTER CORE
+      { symbol: "NVDA", name: "NVIDIA", bucket: "AI / DATA CENTER CORE", sector: "Semiconductor · GPU", role: "AI 가속 GPU, HGX·DGX 플랫폼, CUDA 소프트웨어 생태계.", thesis: "AI 데이터센터의 사실상 표준 GPU 공급자. CUDA·소프트웨어 락인, 하이엔드 GPU 독점적 지위, 수요는 하이퍼스케일러·엔터프라이즈 AI 확산과 함께 장기 성장." },
+      { symbol: "MSFT", name: "Microsoft", bucket: "AI / DATA CENTER CORE", sector: "Hyperscaler · Cloud", role: "Azure 클라우드, Copilot, OpenAI 파트너십.", thesis: "엔터프라이즈 IT 예산과 AI 워크플로우가 모두 모이는 플랫폼. 서버·소프트웨어·클라우드 스택을 수직 통합." },
+      { symbol: "AMZN", name: "Amazon", bucket: "AI / DATA CENTER CORE", sector: "Hyperscaler · Cloud", role: "AWS 클라우드, Bedrock·Trainium·Inferentia.", thesis: "AWS는 여전히 글로벌 1위 클라우드. 자체 AI 칩 + 모델 서비스로 마진 구조 개선과 AI 수요 흡수." },
+      { symbol: "GOOGL", name: "Alphabet (Google)", bucket: "AI / DATA CENTER CORE", sector: "Hyperscaler · Cloud", role: "Search·YouTube·Google Cloud·TPU.", thesis: "검색·광고 캐시카우에 AI 전환. TPU·Vertex AI 등 자체 스택." },
+      { symbol: "META", name: "Meta Platforms", bucket: "AI / DATA CENTER CORE", sector: "Consumer Internet", role: "광고·SNS, Llama 오픈소스 모델.", thesis: "리치한 광고 비즈니스 + AI 추천 알고리즘·모델로 수익성·사용시간 극대화." },
+      { symbol: "AVGO", name: "Broadcom", bucket: "AI / DATA CENTER CORE", sector: "Semiconductor", role: "커스텀 ASIC·스위치·네트워킹 칩, VMware.", thesis: "하이엔드 스위치·ASIC, 하이퍼스케일러용 커스텀 칩의 핵심 공급자." },
+      { symbol: "ANET", name: "Arista Networks", bucket: "AI / DATA CENTER CORE", sector: "Networking", role: "클라우드 스위치·AI 패브릭 네트워킹.", thesis: "AI 서버 랙이 증가할수록 400G/800G 스위치 수요 동반 폭발." },
+      { symbol: "SMCI", name: "Super Micro Computer", bucket: "AI / DATA CENTER CORE", sector: "Server ODM/OEM", role: "GPU 서버·랙 통합 솔루션.", thesis: "모듈형 서버·빠른 커스터마이징으로 AI 서버 사이클의 레버리지." },
+      { symbol: "VRT", name: "Vertiv", bucket: "AI / DATA CENTER CORE", sector: "Power · Thermal", role: "전력·쿨링·랙 인프라.", thesis: "고밀도 AI 랙에 맞는 전력·냉각 솔루션 필수. GPU가 많아질수록 같이 성장." },
+      { symbol: "CDNS", name: "Cadence Design Systems", bucket: "AI / DATA CENTER CORE", sector: "EDA Software", role: "칩 설계 소프트웨어·IP.", thesis: "모든 첨단 칩 설계의 인프라. 파운드리 노드 미세화 + AI ASIC 증가로 구조적 성장." },
+      { symbol: "ASML", name: "ASML Holding", bucket: "AI / DATA CENTER CORE", sector: "Semi Equipment", role: "EUV 리소그래피 독점 공급.", thesis: "첨단 공정은 ASML이 없으면 불가능. 가장 업스트림의 사실상 독점." },
+      { symbol: "TSM", name: "Taiwan Semi", bucket: "AI / DATA CENTER CORE", sector: "Foundry", role: "최첨단 파운드리.", thesis: "AI GPU·ASIC 대부분이 TSMC 위에 만들어짐. 노드 경쟁력·규모의 경제." },
+      { symbol: "AMAT", name: "Applied Materials", bucket: "AI / DATA CENTER CORE", sector: "Semi Equipment", role: "증착·식각·CMP 등 공정 장비.", thesis: "메모리·로직 CAPEX의 핵심 수혜." },
+      { symbol: "MRVL", name: "Marvell Technology", bucket: "AI / DATA CENTER CORE", sector: "Semiconductor", role: "데이터센터·5G용 칩, 가속기 인터커넥트.", thesis: "AI 네트워크·가속기용 커스텀 실리콘." },
+      { symbol: "CRDO", name: "Credo Technology", bucket: "AI / DATA CENTER CORE", sector: "High-speed Connectivity", role: "1.6T/800G용 저전력 SerDes·다이렉트 어태치 케이블.", thesis: "고속·저전력 연결이 필요한 AI 랙의 필수 부품." },
+      { symbol: "ALAB", name: "Astera Labs", bucket: "AI / DATA CENTER CORE", sector: "Connectivity · CXL", role: "CXL 메모리 허브, PCIe 리타이머.", thesis: "메모리 풀링·PCIe 확장으로 AI 서버의 병목을 해소." },
+      { symbol: "SITM", name: "SiTime", bucket: "AI / DATA CENTER CORE", sector: "Timing Devices", role: "MEMS 클럭·타이밍 솔루션.", thesis: "데이터센터·통신 장비의 고정밀 타이밍 수요 증가." },
+      { symbol: "EQIX", name: "Equinix", bucket: "AI / DATA CENTER CORE", sector: "Data Center REIT", role: "코로케이션 데이터센터.", thesis: "엣지·네트워크 허브 역할. AI·클라우드 트래픽 증가의 간접 수혜." },
+      { symbol: "DLR", name: "Digital Realty Trust", bucket: "AI / DATA CENTER CORE", sector: "Data Center REIT", role: "하이퍼스케일 DC 인프라.", thesis: "AI 인프라 건물·전력·냉각 CAPEX 수혜." },
+
+      // SOFTWARE / PLATFORM
+      { symbol: "PLTR", name: "Palantir", bucket: "SOFTWARE / PLATFORM", sector: "AI Platform", role: "정부·기업용 데이터·AI 플랫폼.", thesis: "온톨로지 기반 데이터 모델링 + AI 운영 플랫폼으로 기업 AI 전환 수혜." },
+      { symbol: "NOW", name: "ServiceNow", bucket: "SOFTWARE / PLATFORM", sector: "Enterprise SaaS", role: "워크플로우·ITSM 자동화 플랫폼.", thesis: "엔터프라이즈 백오피스를 AI로 자동화하는 핵심 OS." },
+      { symbol: "CRM", name: "Salesforce", bucket: "SOFTWARE / PLATFORM", sector: "Enterprise SaaS", role: "CRM·데이터·AI 기반 고객 플랫폼.", thesis: "고객 데이터·워크플로우와 AI를 묶는 B2B 허브." },
+      { symbol: "DDOG", name: "Datadog", bucket: "SOFTWARE / PLATFORM", sector: "Observability", role: "로그·메트릭·APM 모니터링.", thesis: "클라우드·마이크로서비스·AI 인프라의 관측 필수 도구." },
+      { symbol: "SNOW", name: "Snowflake", bucket: "SOFTWARE / PLATFORM", sector: "Data Cloud", role: "데이터 웨어하우스·공유 플랫폼.", thesis: "엔터프라이즈 데이터 저장·공유의 중심. AI 학습 데이터 허브." },
+      { symbol: "NET", name: "Cloudflare", bucket: "SOFTWARE / PLATFORM", sector: "Edge Network", role: "CDN·보안·서버리스·엣지 컴퓨팅.", thesis: "전 세계 엣지 네트워크 위에 애플리케이션·AI inference를 올리는 구조." },
+      { symbol: "C3AI", name: "C3.ai", bucket: "SOFTWARE / PLATFORM", sector: "AI Applications", role: "산업·에너지용 AI 앱 플랫폼.", thesis: "에너지·제조 등 특정 산업용 AI 솔루션 제공." },
+
+      // ANALOG / POWER / ENERGY
+      { symbol: "ETN", name: "Eaton", bucket: "POWER / ENERGY", sector: "Power Management", role: "전력 배전·UPS·EV·데이터센터 전력 솔루션.", thesis: "AI 데이터센터·전동화로 전력 인프라 CAPEX 장기 증가." },
+      { symbol: "CEG", name: "Constellation Energy", bucket: "POWER / ENERGY", sector: "Zero-carbon Power", role: "원전·청정전력 발전.", thesis: "AI 데이터센터의 전력 수요를 받는 청정전력 플레이." },
+      { symbol: "NEE", name: "NextEra Energy", bucket: "POWER / ENERGY", sector: "Renewables", role: "미국 최대 재생에너지·전력 유틸리티.", thesis: "풍력·태양광 기반 장기 성장 + 데이터센터 전력 수요." },
+      { symbol: "BE", name: "Bloom Energy", bucket: "POWER / ENERGY", sector: "Fuel Cell", role: "SOFC 연료전지, 온사이트 전력.", thesis: "데이터센터·산업 사이트 분산 전원 솔루션." },
+      { symbol: "SMR", name: "NuScale Power", bucket: "POWER / ENERGY", sector: "SMR", role: "소형 모듈 원전(SMR) 설계.", thesis: "장기적으로 데이터센터·그리드용 청정 기저부하 전원 후보." },
+      { symbol: "OKLO", name: "Oklo", bucket: "POWER / ENERGY", sector: "Advanced Nuclear", role: "소형 고급 원자로 설계·서비스.", thesis: "데이터센터·산업용 전용 원전 모델을 지향." },
+
+      // SEMI / DEVICES / HW
+      { symbol: "MU", name: "Micron", bucket: "SEMI / DEVICES", sector: "Memory", role: "DRAM·NAND 메모리.", thesis: "AI 서버용 HBM·고용량 메모리 수요의 직접 수혜." },
+      { symbol: "LRCX", name: "Lam Research", bucket: "SEMI / DEVICES", sector: "Semi Equipment", role: "식각·증착 장비.", thesis: "파운드리·메모리 CAPEX 필요 장비." },
+      { symbol: "HPE", name: "HPE", bucket: "SEMI / DEVICES", sector: "Server OEM", role: "서버·스토리지·GreenLake.", thesis: "전통 서버에서 AI·서비스형 인프라로 전환 중." },
+      { symbol: "IBM", name: "IBM", bucket: "SEMI / DEVICES", sector: "Enterprise IT", role: "컨설팅·하이브리드 클라우드.", thesis: "레거시 IT + AI 컨설팅 포지션." },
+
+      // CRYPTO / MINING / INFRA
+      { symbol: "COIN", name: "Coinbase", bucket: "CRYPTO / MINING", sector: "Exchange", role: "미국 대표 규제 내 암호화폐 거래소.", thesis: "온체인·ETF·기관 수요 증가 수혜." },
+      { symbol: "MARA", name: "Marathon Digital", bucket: "CRYPTO / MINING", sector: "BTC Mining", role: "대규모 비트코인 채굴 업체.", thesis: "BTC 가격·해시레이트 레버리지." },
+      { symbol: "RIOT", name: "Riot Platforms", bucket: "CRYPTO / MINING", sector: "BTC Mining", role: "북미 비트코인 채굴.", thesis: "채굴 인프라·전력 계약 기반 레버리지." },
+      { symbol: "CLSK", name: "CleanSpark", bucket: "CRYPTO / MINING", sector: "BTC Mining", role: "에너지 효율·비트코인 채굴.", thesis: "효율 좋은 채굴 인프라 확대." },
+      { symbol: "BTDR", name: "Bitdeer Technologies", bucket: "CRYPTO / MINING", sector: "BTC Mining", role: "채굴·호스팅·클라우드 해시.", thesis: "채굴 + 고객 호스팅 혼합 모델." },
+      { symbol: "BMNR", name: "BitMine Immersion", bucket: "CRYPTO / MINING", sector: "Immersion Mining", role: "침지식 채굴 인프라.", thesis: "고효율 채굴·냉각 기술." },
+
+      // CONSUMER / BRAND
+      { symbol: "AAPL", name: "Apple", bucket: "CONSUMER / BRAND", sector: "Consumer Tech", role: "아이폰·맥·서비스·생태계.", thesis: "프리미엄 하드웨어 + 서비스 캐시카우. 디바이스에서 온디바이스 AI로 확장." },
+      { symbol: "ABNB", name: "Airbnb", bucket: "CONSUMER / BRAND", sector: "Online Travel", role: "숙박·체험 플랫폼.", thesis: "자산 가벼운 모델 + 여행 트렌드 수혜." },
+      { symbol: "NFLX", name: "Netflix", bucket: "CONSUMER / BRAND", sector: "Streaming", role: "글로벌 스트리밍·콘텐츠 스튜디오.", thesis: "규모의 경제가 큰 구독·콘텐츠 비즈니스." },
+      { symbol: "DIS", name: "Walt Disney", bucket: "CONSUMER / BRAND", sector: "Media", role: "IP·테마파크·콘텐츠.", thesis: "강력한 IP 기반 경험 비즈니스." },
+      { symbol: "SHOP", name: "Shopify", bucket: "CONSUMER / BRAND", sector: "E-commerce Infra", role: "온라인 상점 인프라.", thesis: "중소 셀러·DTC 브랜드의 인프라." },
+      { symbol: "SBUX", name: "Starbucks", bucket: "CONSUMER / BRAND", sector: "F&B", role: "글로벌 카페 체인.", thesis: "브랜드·리워드 프로그램 기반 F&B." },
+      { symbol: "TSLA", name: "Tesla", bucket: "CONSUMER / BRAND", sector: "EV / Energy", role: "전기차·배터리·에너지 스토리지.", thesis: "모빌리티 + 에너지 플랫폼." },
+
+      // INDUSTRIAL / INFRA / DEFENSE (샘플 일부만)
+      { symbol: "CAT", name: "Caterpillar", bucket: "INDUSTRIAL / INFRA", sector: "Construction Equipment", role: "중장비·광산·인프라 장비.", thesis: "인프라 투자·자원 개발 사이클 수혜." },
+      { symbol: "DE", name: "Deere & Co.", bucket: "INDUSTRIAL / INFRA", sector: "Agriculture", role: "농기계·정밀 농업.", thesis: "자율주행·정밀 농업 기술 도입." },
+      { symbol: "LMT", name: "Lockheed Martin", bucket: "DEFENSE / AEROSPACE", sector: "Defense", role: "전투기·미사일·우주.", thesis: "방위비 지출 증가의 대표 수혜." },
+      { symbol: "KTOS", name: "Kratos Defense", bucket: "DEFENSE / AEROSPACE", sector: "Defense Tech", role: "무인기·저비용 방산 시스템.", thesis: "저비용·민첩형 방산 솔루션." },
+
+      // (필요하면 여기에 나머지 종목도 같은 패턴으로 계속 추가 가능)
+    ];
+
+    // ------------------------------
+    //  STATE
+    // ------------------------------
+
+    let equitySortField = "symbol"; // 'price' | 'change' | 'changePct'
+    let equitySortDir = "asc";
+    let latestQuoteMap = {};
+    let currentInsightSymbol = null;
+
+    // ------------------------------
+    //  RENDER EQUITY TABLE
+    // ------------------------------
+
+    const bucketsInOrder = [
+      "AI / DATA CENTER CORE",
+      "SOFTWARE / PLATFORM",
+      "POWER / ENERGY",
+      "SEMI / DEVICES",
+      "CRYPTO / MINING",
+      "CONSUMER / BRAND",
+      "INDUSTRIAL / INFRA",
+      "DEFENSE / AEROSPACE"
+    ];
+
+    function renderEquitiesTable() {
+      const container = document.getElementById("equities-table-container");
+      container.innerHTML = "";
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      const thSymbol = document.createElement("th");
+      thSymbol.textContent = "SYMBOL";
+
+      const thName = document.createElement("th");
+      thName.textContent = "NAME";
+
+      const thPrice = document.createElement("th");
+      thPrice.textContent = "PRICE (USD)";
+      thPrice.classList.add("sortable");
+      thPrice.dataset.field = "price";
+
+      const thChange = document.createElement("th");
+      thChange.textContent = "CHANGE";
+      thChange.classList.add("sortable");
+      thChange.dataset.field = "change";
+
+      const thChangePct = document.createElement("th");
+      thChangePct.textContent = "%▲";
+      thChangePct.classList.add("sortable");
+      thChangePct.dataset.field = "changePct";
+
+      // 방향 표시
+      [thPrice, thChange, thChangePct].forEach(th => {
+        if (th.dataset.field === equitySortField) {
+          th.dataset.dir = equitySortDir;
+        }
+        th.addEventListener("click", () => {
+          onSortClick(th.dataset.field);
+        });
+      });
+
+      headerRow.appendChild(thSymbol);
+      headerRow.appendChild(thName);
+      headerRow.appendChild(thPrice);
+      headerRow.appendChild(thChange);
+      headerRow.appendChild(thChangePct);
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      bucketsInOrder.forEach(bucket => {
+        const bucketItems = EQUITIES.filter(e => e.bucket === bucket);
+        if (bucketItems.length === 0) return;
+
+        const labelRow = document.createElement("tr");
+        const labelCell = document.createElement("td");
+        labelCell.colSpan = 5;
+        labelCell.className = "section-label";
+        labelCell.textContent = bucket;
+        labelRow.appendChild(labelCell);
+        tbody.appendChild(labelRow);
+
+        const sortedItems = [...bucketItems].sort((a, b) => {
+          const qa = latestQuoteMap[a.symbol] || {};
+          const qb = latestQuoteMap[b.symbol] || {};
+          let va, vb;
+
+          if (equitySortField === "price") {
+            va = qa.price ?? 0;
+            vb = qb.price ?? 0;
+          } else if (equitySortField === "change") {
+            va = qa.change ?? 0;
+            vb = qb.change ?? 0;
+          } else if (equitySortField === "changePct") {
+            va = qa.changePercent ?? 0;
+            vb = qb.changePercent ?? 0;
+          } else {
+            va = a.symbol;
+            vb = b.symbol;
+          }
+
+          if (va < vb) return equitySortDir === "asc" ? -1 : 1;
+          if (va > vb) return equitySortDir === "asc" ? 1 : -1;
+          return 0;
+        });
+
+        sortedItems.forEach(eq => {
+          const row = document.createElement("tr");
+          row.classList.add("equity-row");
+          row.dataset.symbol = eq.symbol;
+
+          row.addEventListener("click", () => {
+            toggleInsight(eq.symbol);
+          });
+
+          const q = latestQuoteMap[eq.symbol] || {};
+
+          // symbol
+          const tdSymbol = document.createElement("td");
+          tdSymbol.className = "symbol";
+          tdSymbol.textContent = eq.symbol;
+          row.appendChild(tdSymbol);
+
+          // name
+          const tdName = document.createElement("td");
+          tdName.className = "name";
+          tdName.textContent = eq.name;
+          row.appendChild(tdName);
+
+          // price
+          const tdPrice = document.createElement("td");
+          tdPrice.className = "price";
+          tdPrice.textContent =
+            q.price != null ? q.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—";
+          row.appendChild(tdPrice);
+
+          // change
+          const tdChange = document.createElement("td");
+          tdChange.className = "change";
+          if (q.change != null) {
+            const cls = q.change > 0 ? "up" : q.change < 0 ? "down" : "muted";
+            tdChange.classList.add(cls);
+            tdChange.textContent = (q.change > 0 ? "+" : "") + q.change.toFixed(2);
+          } else {
+            tdChange.textContent = "—";
+            tdChange.classList.add("muted");
+          }
+          row.appendChild(tdChange);
+
+          // change %
+          const tdChangePct = document.createElement("td");
+          tdChangePct.className = "change-pct";
+          if (q.changePercent != null) {
+            const cls = q.changePercent > 0 ? "up" : q.changePercent < 0 ? "down" : "muted";
+            tdChangePct.classList.add(cls);
+            tdChangePct.textContent =
+              (q.changePercent > 0 ? "+" : "") + q.changePercent.toFixed(2) + "%";
+          } else {
+            tdChangePct.textContent = "—";
+            tdChangePct.classList.add("muted");
+          }
+          row.appendChild(tdChangePct);
+
+          tbody.appendChild(row);
+        });
+      });
+
+      table.appendChild(tbody);
+      container.appendChild(table);
+    }
+
+    function onSortClick(field) {
+      if (equitySortField === field) {
+        equitySortDir = equitySortDir === "asc" ? "desc" : "asc";
+      } else {
+        equitySortField = field;
+        equitySortDir = field === "price" || field === "change" || field === "changePct" ? "desc" : "asc";
+      }
+      renderEquitiesTable();
+    }
+
+    // ------------------------------
+    //  INSIGHT PANEL
+    // ------------------------------
+
+    function getEquityMeta(symbol) {
+      return EQUITIES.find(e => e.symbol === symbol);
+    }
+
+    function toggleInsight(symbol) {
+      const panel = document.getElementById("equity-insight");
+      if (currentInsightSymbol === symbol) {
+        // 접기
+        currentInsightSymbol = null;
+        panel.style.display = "none";
+        panel.innerHTML = "";
+        document.getElementById("news-symbol").textContent = "NVDA";
+        fetchNews("NVDA");
+        return;
+      }
+      currentInsightSymbol = symbol;
+      const meta = getEquityMeta(symbol);
+      if (!meta) return;
+
+      const q = latestQuoteMap[symbol] || {};
+
+      panel.style.display = "block";
+      panel.innerHTML = "";
+
+      const header = document.createElement("div");
+      header.className = "insight-header";
+
+      const left = document.createElement("div");
+      const title = document.createElement("div");
+      title.className = "insight-title";
+      title.textContent = meta.name;
+      const sym = document.createElement("span");
+      sym.className = "insight-symbol";
+      sym.textContent = meta.symbol;
+      title.appendChild(sym);
+      left.appendChild(title);
+
+      const metaLine = document.createElement("div");
+      metaLine.className = "insight-meta";
+      metaLine.textContent = meta.bucket + " · " + meta.sector + " · " + meta.role;
+      left.appendChild(metaLine);
+
+      header.appendChild(left);
+
+      const right = document.createElement("div");
+      if (q.price != null) {
+        const priceLabel = document.createElement("div");
+        priceLabel.className = "insight-meta";
+        const dirClass = q.change > 0 ? "up" : q.change < 0 ? "down" : "muted";
+        priceLabel.innerHTML =
+          `<span style="font-variant-numeric:tabular-nums;">${q.price.toFixed(2)} USD</span> ` +
+          `<span class="${dirClass}" style="margin-left:6px;">` +
+          `${q.change > 0 ? "+" : ""}${q.change?.toFixed(2) ?? ""} ` +
+          `(${q.changePercent > 0 ? "+" : ""}${q.changePercent?.toFixed(2) ?? ""}%)</span>`;
+        right.appendChild(priceLabel);
+      }
+      const toggle = document.createElement("div");
+      toggle.className = "insight-toggle";
+      toggle.textContent = "CLOSE";
+      toggle.addEventListener("click", () => toggleInsight(symbol));
+      right.appendChild(toggle);
+
+      header.appendChild(right);
+      panel.appendChild(header);
+
+      const body = document.createElement("div");
+      body.className = "insight-body";
+      body.textContent = meta.thesis;
+      panel.appendChild(body);
+
+      // 뉴스 심볼 스위치
+      document.getElementById("news-symbol").textContent = symbol;
+      fetchNews(symbol);
+    }
+
+    // ------------------------------
+    //  FETCH: QUOTES (YAHOO)
+    // ------------------------------
+
+    async function fetchQuotes() {
+      const errorEl = document.getElementById("equities-error");
+      errorEl.style.display = "none";
+      errorEl.textContent = "";
+
+      const symbols = EQUITIES.map(e => e.symbol).join(",");
+      try {
+        const res = await fetch(`/api/quotes?symbols=${encodeURIComponent(symbols)}`);
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error("HTTP " + res.status + " " + txt);
+        }
+        const data = await res.json();
+        latestQuoteMap = data || {};
+        renderEquitiesTable();
+      } catch (err) {
+        console.error("quotes error", err);
+        errorEl.style.display = "block";
+        errorEl.textContent = "Quotes API 오류: " + err.message;
+      }
+    }
+
+    // ------------------------------
+    //  FETCH: FX (ExchangeRate.host)
+    // ------------------------------
+
+    async function fetchFx() {
+      const container = document.getElementById("fx-container");
+      const errorEl = document.getElementById("fx-error");
+      container.innerHTML = "";
+      errorEl.style.display = "none";
+
+      try {
+        const res = await fetch("/api/fx");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json(); // { base: 'KRW', rates: { USD: n, ... } }
+        const pairs = [
+          { pair: "KRW/USD", base: "KRW", quote: "USD" },
+          { pair: "KRW/EUR", base: "KRW", quote: "EUR" },
+          { pair: "KRW/CHF", base: "KRW", quote: "CHF" },
+          { pair: "KRW/JPY", base: "KRW", quote: "JPY" },
+          { pair: "KRW/CNY", base: "KRW", quote: "CNY" },
+        ];
+
+        pairs.forEach(p => {
+          const rate = data.rates[p.quote];
+          const row = document.createElement("div");
+          row.className = "fx-row";
+
+          const left = document.createElement("div");
+          left.innerHTML = `<div class="fx-pair">${p.pair}</div>`;
+          row.appendChild(left);
+
+          const right = document.createElement("div");
+          right.className = "fx-rate";
+          right.textContent = rate ? rate.toFixed(4) : "—";
+          row.appendChild(right);
+
+          container.appendChild(row);
+        });
+      } catch (err) {
+        console.error("fx error", err);
+        errorEl.style.display = "block";
+        errorEl.textContent = "FX API 오류: " + err.message;
+      }
+    }
+
+    // ------------------------------
+    //  FETCH: CRYPTO (CoinGecko)
+    // ------------------------------
+
+    async function fetchCrypto() {
+      const tbody = document.getElementById("crypto-body");
+      const errorEl = document.getElementById("crypto-error");
+      tbody.innerHTML = "";
+      errorEl.style.display = "none";
+
+      try {
+        const res = await fetch("/api/crypto");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json(); // array
+
+        data.forEach(c => {
+          const tr = document.createElement("tr");
+
+          const tdSym = document.createElement("td");
+          tdSym.textContent = c.symbol.toUpperCase();
+          tr.appendChild(tdSym);
+
+          const tdName = document.createElement("td");
+          tdName.textContent = c.name;
+          tr.appendChild(tdName);
+
+          const tdUsd = document.createElement("td");
+          tdUsd.style.textAlign = "right";
+          tdUsd.textContent = c.priceUsd != null
+            ? c.priceUsd.toLocaleString("en-US", { maximumFractionDigits: 2 })
+            : "—";
+          tr.appendChild(tdUsd);
+
+          const tdPct = document.createElement("td");
+          tdPct.style.textAlign = "right";
+          if (c.change24h != null) {
+            const cls = c.change24h > 0 ? "up" : c.change24h < 0 ? "down" : "muted";
+            tdPct.classList.add(cls);
+            tdPct.textContent =
+              (c.change24h > 0 ? "+" : "") + c.change24h.toFixed(2) + "%";
+          } else {
+            tdPct.classList.add("muted");
+            tdPct.textContent = "—";
+          }
+          tr.appendChild(tdPct);
+
+          const tdVol = document.createElement("td");
+          tdVol.style.textAlign = "right";
+          tdVol.textContent = c.volume24h != null
+            ? (c.volume24h / 1_000_000).toFixed(1) + "M"
+            : "—";
+          tr.appendChild(tdVol);
+
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("crypto error", err);
+        errorEl.style.display = "block";
+        errorEl.textContent = "Crypto API 오류: " + err.message;
+      }
+    }
+
+    // ------------------------------
+    //  FETCH: NEWS (Finnhub)
+    // ------------------------------
+
+    async function fetchNews(symbol) {
+      const listEl = document.getElementById("news-list");
+      const errorEl = document.getElementById("news-error");
+      listEl.innerHTML = "";
+      errorEl.style.display = "none";
+
+      try {
+        const res = await fetch(`/api/news?symbol=${encodeURIComponent(symbol)}`);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const items = await res.json();
+        if (!Array.isArray(items) || items.length === 0) {
+          listEl.innerHTML = `<li class="muted">최근 뉴스가 없습니다.</li>`;
+          return;
+        }
+        items.slice(0, 6).forEach(n => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = n.url;
+          a.target = "_blank";
+          a.rel = "noreferrer noopener";
+          a.textContent = n.headline;
+          li.appendChild(a);
+          const meta = document.createElement("div");
+          meta.className = "muted";
+          meta.style.fontSize = "10px";
+          const date = new Date(n.datetime * 1000);
+          meta.textContent =
+            `${n.source} · ${date.toISOString().slice(0, 10)}`;
+          li.appendChild(meta);
+          listEl.appendChild(li);
+        });
+      } catch (err) {
+        console.error("news error", err);
+        errorEl.style.display = "block";
+        errorEl.textContent = "News API 오류: " + err.message;
+      }
+    }
+
+    // ------------------------------
+    //  REFRESH CONTROL
+    // ------------------------------
+
+    async function refreshAll() {
+      const stamp = new Date();
+      document.getElementById("last-updated").textContent =
+        "UPDATED — " + stamp.toLocaleString("en-GB");
+
+      await Promise.all([
+        fetchQuotes(),
+        fetchFx(),
+        fetchCrypto(),
+        fetchNews(currentInsightSymbol || "NVDA"),
+      ]);
+    }
+
+    document.getElementById("refresh-all").addEventListener("click", refreshAll);
+
+    // 초기 렌더
+    renderEquitiesTable();
+    refreshAll();
+  </script>
+</body>
+</html>
